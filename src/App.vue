@@ -27,13 +27,7 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-body {
-  /* 全局样式8 */
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background-color: #f4f4f4;
-}
+
 
 .fade-enter-active, .fade-leave-active {
   transition: all 0.3s;

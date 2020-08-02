@@ -1,7 +1,8 @@
 <template>
-    <div class="user-detail">
+    <div class="user-detail" v-if="userData">
         <div class="user-img">
-            <img src="../../assets/head_img.jpg" alt="">
+            <img :src="userData.user_img" v-if="userData.user_img">
+            <img src="../../assets/head_img.jpg" v-else>
         </div>
         <div class="user-desc">
             <div class="desc-item fans">
@@ -21,10 +22,13 @@
 
         <div class="user-info">
             <div class="username">
-                小舟
+                <span v-if="userData.username">{{userData.username}}</span>
+                <span v-else>某某</span>
             </div>
             <div class="sign">
-                这个人很懒，什么都留下……
+                <span v-if="userData.user_desc">{{userData.user_desc}}</span>
+                <span v-else>这个人很懒，什么都留下……</span>
+                
             </div>
             <div class="uid" v-show="!isCollapsed">
                 uid:123456789
@@ -40,12 +44,15 @@
 
 <script>
 export default {
+    props: {
+        userData: Object,
+    },
     data() {
         return {
             //true: collapsed
             isCollapsed: true,
         }
-    }
+    },
 }
 </script>
 
@@ -147,7 +154,7 @@ export default {
 
         .uid {
             font-size: 3.056vw;
-            background-color: #ccc;
+            background-color: #ddd;
             color: black;
             padding: 1.389vw 1.389vw;
             border-radius: 1.389vw;

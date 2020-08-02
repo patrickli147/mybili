@@ -5,11 +5,14 @@ import state from './state/index';
 import Vant from 'vant';
 import 'vant/lib/index.css';
 
+import './style//common.scss'
+
 import http from './utils/http';
 Vue.prototype.$http = http;
 
-import {Toast} from 'vant';
+import {Toast, Dialog} from 'vant';
 Vue.prototype.$toast = Toast;
+Vue.prototype.$dialog = Dialog;
 
 Vue.use(Vant);
 

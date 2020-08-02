@@ -4,7 +4,7 @@
         
         <img class="banner" src="../assets/bannerTop_new.png" alt="">
 
-        <user-detail></user-detail>
+        <user-detail :userData="userData"></user-detail>
 
     </div>
 </template>
@@ -17,6 +17,37 @@ export default {
     components: {
         NavBar,
         UserDetail,
+    },
+    methods: {
+        /**
+        * @func
+        * @desc 获取用户数据
+        */
+        getUserInfoData() {
+            this.$http.get('/user/' + localStorage.getItem("id"), {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(res => {
+                console.log(res);
+
+                this.userData = res.data[0];
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    },
+    created() {
+        //获取用户数据
+        this.getUserInfoData();
+    },
+    data() {
+        return {
+            //用户data
+            userData: null
+        }
     }
 }
 </script>

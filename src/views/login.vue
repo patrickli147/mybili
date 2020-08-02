@@ -70,13 +70,22 @@ export default {
 
                     if (data) {
                         //返回了data
-                        if (data.code === 302) {
+                        if (data.code === 302 || data.code === 301) {
                             //返回码302，登录失败
                             this.$toast.fail(data.msg);
                         }
                         else if (data.code === 200) {
                             //返回码200，登录成功
                             this.$toast.success(data.msg);
+
+                            //使用localstorage存储id和token
+                            localStorage.setItem("id", data.id);
+                            localStorage.setItem("token", data.objtoken);
+
+                            //跳转到userinfo页面
+                            setTimeout(() => {
+                                this.$router.push('/userinfo');
+                            }, 1000);
                         }
                         else {
                             //其余

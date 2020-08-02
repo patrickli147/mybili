@@ -27,7 +27,6 @@
         ></login-text>  
         
         <login-btn btntext="注册" @submit="handleSubmit"></login-btn>
-
     </div>
 </template>
 
@@ -37,6 +36,11 @@ import LoginText from '@/components/common/LoginText.vue';
 import LoginBtn from '@/components/common/LoginBtn.vue';
 
 export default {
+    mounted() {
+        //this.$dialog.confirm({
+        //    title: "是否立即跳转？"
+        //});
+    },
     components: {
         LoginTop,
         LoginText,
@@ -77,13 +81,23 @@ export default {
 
                     if (data) {
                         //返回了data
-                        if (data.code === 302) {
+                        if (data.code === 302 || data.code === 301) {
                             //返回码302，注册失败账号已经存在
                             this.$toast.fail(data.msg);
                         }
                         else if (data.code === 200) {
                             //返回码200，注册成功
                             this.$toast.success(data.msg);
+
+                            //使用localstorage存储id和token
+                            localStorage.setItem("id", data.id);
+                            localStorage.setItem("token", data.objtoken);
+
+                            //跳转到登录
+                            setTimeout(() => {
+                                this.$router.push('/login');
+                            }, 1000);
+
                         }
                         else {
                             //其余
