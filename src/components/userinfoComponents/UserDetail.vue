@@ -1,8 +1,8 @@
 <template>
     <div class="user-detail" v-if="userData">
         <div class="user-img">
-            <img :src="userData.user_img" v-if="userData.user_img">
-            <img src="../../assets/head_img.jpg" v-else>
+            <img :src="userData.user_img" v-if="userData.user_img" >
+            <img src="../../assets/default_img.jpg" v-else>
         </div>
         <div class="user-desc">
             <div class="desc-item fans">
@@ -17,7 +17,7 @@
                 <span>0</span>
                 <span>获赞</span>
             </div>
-            <div class="edit">编辑资料</div>
+            <div class="edit" @click="$router.push('/editUserInfo')">编辑资料</div>
         </div>
 
         <div class="user-info">
@@ -74,10 +74,11 @@ export default {
         border-radius: 50%;
         position: relative;
         img {
+            width: 16.889vw;
+            height: 16.889vw;
             position: absolute;
             left: 0;
             top: -2.778vw;
-            width: 50%;
             border-radius: 50%;
         }
     }
@@ -95,9 +96,9 @@ export default {
         .desc-item {
             width: 33.33%;
             height: 40%;
-            border-radius: 2.778vw;
-            padding-top: 2.778vw;
-            padding-bottom: 1.389vw;
+            //border-radius: 2.778vw;
+            //padding-top: 2.778vw;
+            padding: 0 1.389vw;
             box-sizing: border-box;
         
             display: flex;

@@ -24,11 +24,7 @@ export default {
         * @desc 获取用户数据
         */
         getUserInfoData() {
-            this.$http.get('/user/' + localStorage.getItem("id"), {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
-            })
+            this.$http.get('/user/' + localStorage.getItem("id"))
             .then(res => {
                 console.log(res);
 

@@ -8,9 +8,9 @@ const http = axios.create({
 });
 
 http.interceptors.request.use(function (config) {
-    if (localStorage.getItem('token') && localStorage.getItem('id')) {
+    if (sessionStorage.getItem('token') && localStorage.getItem('id')) {
         //添加请求头
-        config.headers.Authorization = 'Bearer ' + localStorage.getItem('token');
+        config.headers.Authorization = 'Bearer ' + sessionStorage.getItem('token');
     }
     return config;
 }, function (error) {

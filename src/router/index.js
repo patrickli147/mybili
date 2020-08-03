@@ -4,6 +4,8 @@ import Router from 'vue-router';
 import register from '@/views/register.vue';
 import login from '@/views/login.vue';
 import userInfo from '@/views/userInfo.vue';
+import editUserInfo from '@/views/editUserInfo.vue';
+import headImg from '@/views/headImg.vue';
 
 Vue.use(Router);
 
@@ -24,14 +26,29 @@ const router = new Router({
                 isTokenNeeded: true
             }
         },
+        {
+            path: '/editUserInfo',
+            component: editUserInfo,
+            meta: {
+                isTokenNeeded: true
+            }
+        },
+        {
+            path: '/headImg',
+            name: 'headImg',
+            component: headImg,
+            meta: {
+                isTokenNeeded: true
+            }
+        },
     ]
 });
 
 //路由守卫
 router.beforeEach((to, from, next) => {
-    if ((!localStorage.getItem('token') || !localStorage.getItem('id')) && to.meta.isTokenNeeded === true) {
+    if ((!sessionStorage.getItem('token') || !localStorage.getItem('id')) && to.meta.isTokenNeeded === true) {
         router.push('/login');
-        Vue.prototype.$msg.fail('请重新登录');
+        Vue.prototype.$toast.fail('请重新登录');
         return;
     }
     next();

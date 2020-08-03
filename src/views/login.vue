@@ -78,9 +78,9 @@ export default {
                             //返回码200，登录成功
                             this.$toast.success(data.msg);
 
-                            //使用localstorage存储id和token
+                            //存储id和token
                             localStorage.setItem("id", data.id);
-                            localStorage.setItem("token", data.objtoken);
+                            sessionStorage.setItem("token", data.token);
 
                             //跳转到userinfo页面
                             setTimeout(() => {
