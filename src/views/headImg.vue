@@ -1,6 +1,6 @@
 <template>
     <div class="haed-img-wrap">
-        <nav-bar class="nav-bar"></nav-bar>
+        <nav-bar class="nav-bar" :headimg="userData.user_img"></nav-bar>
         
         <div class="main-img">
             <img v-if="url.length > 0" :src="url" alt="">
@@ -14,7 +14,7 @@
         </div>
 
         <div class="back-btn">
-            <van-button @click="$router.push('editUserInfo')" style="border-radius: 2.778vw;width: 88px;" type="default">返回</van-button>
+            <van-button @click="$router.push('editUserInfo')" style="border-radius: 2.778vw;" type="default">返回</van-button>
         </div>
     </div>
 </template>

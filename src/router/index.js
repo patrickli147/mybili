@@ -6,6 +6,8 @@ import login from '@/views/login.vue';
 import userInfo from '@/views/userInfo.vue';
 import editUserInfo from '@/views/editUserInfo.vue';
 import headImg from '@/views/headImg.vue';
+import homePage from '@/views/homePage.vue';
+import article from '@/views/article.vue';
 
 Vue.use(Router);
 
@@ -40,6 +42,19 @@ const router = new Router({
             meta: {
                 isTokenNeeded: true
             }
+        },
+        {
+            path: '/',
+            name: 'homePage',
+            component: homePage,
+            meta: {
+                keepalive: true,
+            }
+        },
+        {
+            path: '/article/:id',
+            name: 'article',
+            component: article,
         },
     ]
 });

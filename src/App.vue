@@ -1,8 +1,16 @@
 <template>
   <div id="app">
-    <transition name="fade" mode="out-in">
-      <router-view></router-view>
-    </transition>
+    
+      <keep-alive>
+        <transition name="fade" mode="out-in">
+          <router-view v-if="$route.meta.keepalive"></router-view>
+        </transition>
+      </keep-alive>
+      
+      <transition name="fade" mode="out-in">
+        <router-view v-if="!$route.meta.keepalive"></router-view>
+      </transition>
+    
     
     <HelloWorld />
   </div>

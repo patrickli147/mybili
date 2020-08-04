@@ -1,8 +1,8 @@
 <template>
     <div class="user-detail" v-if="userData">
         <div class="user-img">
-            <img :src="userData.user_img" v-if="userData.user_img" >
-            <img src="../../assets/default_img.jpg" v-else>
+            <img :src="userData.user_img" v-if="userData.user_img" @click="$router.push('editUserInfo')">
+            <img src="../../assets/default_img.jpg" v-else @click="$router.push('editUserInfo')">
         </div>
         <div class="user-desc">
             <div class="desc-item fans">

@@ -1,6 +1,6 @@
 <template>
     <div class="userinfo-wrap">
-        <nav-bar></nav-bar>
+        <nav-bar :headimg="userData.user_img"></nav-bar>
         
         <img class="banner" src="../assets/bannerTop_new.png" alt="">
 
@@ -42,7 +42,7 @@ export default {
     data() {
         return {
             //用户data
-            userData: null
+            userData: {}
         }
     }
 }

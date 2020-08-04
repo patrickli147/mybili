@@ -1,6 +1,6 @@
 <template>
   <div class="edit-userinfo-wrap">
-    <nav-bar class="nav-bar"></nav-bar>
+    <nav-bar class="nav-bar" :headimg="userData.user_img"></nav-bar>
 
     <div class="edit-headImg" @click="$router.push({name: 'headImg', params: headImgParams})">
       <edit-item leftMsg="头像">
@@ -17,7 +17,7 @@
       <edit-item leftMsg="昵称">{{userData.name}}</edit-item>
     </div>
 
-    <div class="edit-username" @click="editItem('username')">
+    <div class="edit-username">
       <edit-item leftMsg="账号">{{userData.username}}</edit-item>
     </div>
 
@@ -61,6 +61,7 @@
         v-show="isGenderPickShown"
       />
     </van-dialog>
+
   </div>
 </template>
 
@@ -226,8 +227,8 @@ export default {
     justify-content: center;
     align-items: center;
     span {
-      height: 44px;
-      width: 88px;
+      height: 12.222vw;
+      width: 24.444vw;
       //padding: 2.778vw;
       border: 0.278vw solid #fb7299;
       border-radius: 2.778vw;

@@ -5,7 +5,9 @@ import state from './state/index';
 import Vant from 'vant';
 import 'vant/lib/index.css';
 
-import './style//common.scss'
+import './style/common.scss';
+
+import '@/assets/style.css';
 
 import http from './utils/http';
 Vue.prototype.$http = http;

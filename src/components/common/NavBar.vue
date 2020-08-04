@@ -10,7 +10,8 @@
             </p>
         </div>
         <div>
-            <img src="../../assets/default_img.jpg" alt="">
+            <img v-if="headimg" :src="headimg" alt="" @click="$router.push('/editUserInfo')">
+            <img v-else src="../../assets/default_img.jpg" alt="" @click="$router.push('/editUserInfo')" >
             <p>下载APP</p>
         </div>
     </div>
@@ -18,7 +19,7 @@
 
 <script>
 export default {
-
+    props: ['headimg']
 }
 </script>
 
@@ -76,6 +77,7 @@ export default {
         img {
             width: 6.667vw;
             height: 6.667vw;
+            border-radius: 50%;
         }
         p {
             padding: 1.389vw 2.778vw;
