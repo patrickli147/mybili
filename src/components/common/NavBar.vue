@@ -10,8 +10,8 @@
             </p>
         </div>
         <div>
-            <img v-if="headimg" :src="headimg" alt="" @click="$router.push('/editUserInfo')">
-            <img v-else src="../../assets/default_img.jpg" alt="" @click="$router.push('/editUserInfo')" >
+            <img v-if="headimg" :src="headimg" alt="" @click="$router.push('/userinfo')">
+            <img v-else src="../../assets/default_img.jpg" alt="" @click="$router.push('/userinfo')" >
             <p>下载APP</p>
         </div>
     </div>
