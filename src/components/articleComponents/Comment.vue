@@ -1,15 +1,15 @@
 <template>
     <div class="comment-wrap">
-        <div class="comment-total">
+        <div class="comment-total" v-if="!username">
             <span>评论</span>
             <span>{{(length)}}</span>
         </div>
 
         <div class="commenter">
-            <img v-if="userData && userData.user_img" :src="userData.user_img" alt="" @click="$route.push('/userinfo')">
+            <img v-if="userData && userData.user_img" :src="userData.user_img" alt="" @click="$router.push('/userinfo')">
             <img v-else src="../../assets/default_img.jpg" alt="" @click="$router.push('/userinfo')">
 
-            <input type="text" placeholder="请输入评论..." @focus="handleInputFocus" v-model="commentInput">
+            <input @blur="handleInputBlur" ref="commenter" type="text" :placeholder="username ? `回复@${username}` : '请输入评论...'" @focus="handleInputFocus" v-model="commentInput">
 
             <button @click="commitComment">发表</button>
         </div>
@@ -48,7 +48,34 @@ export default {
         * @desc 发表评论
         */
         commitComment() {
+            if (this.commentInput === '') {
+                this.$toast.fail("评论不能为空");
+                return;
+            }
+
             this.$emit("commitComment", this.commentInput);
+
+            //clear
+            this.commentInput = '';
+        },
+        /**
+        * @func
+        * @desc focus input
+        */
+        focusInput() {
+            this.$refs.commenter.focus();
+        },
+        /**
+        * @func
+        * @desc input blur
+        */
+        handleInputBlur() {
+            //blur 的同时可以 点击button 之后才触发inputBlur
+            setTimeout(() => {
+                console.log("blur")
+                this.$emit("inputBlur");
+            }, 100);
+            
         }
     },
     data() {
@@ -64,8 +91,14 @@ export default {
         if (sessionStorage.getItem("token")) {
             this.getUserData();
         }
+        
     },
-    props: ['length']
+    props: ['length', 'username'],
+    mounted() {
+        if (this.username) {
+            this.focusInput();
+        }
+    }
 }
 </script>
 

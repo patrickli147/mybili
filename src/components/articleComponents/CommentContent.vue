@@ -18,7 +18,7 @@
                     +关注
                 </div>
                 
-                <div class="comment-content">
+                <div class="comment-content" @click="handleReply(parent.comment_id, parent.userinfo.name)">
                     <p>{{parent.comment_content}}</p>
                 </div>
 
@@ -39,9 +39,21 @@
                     </div>
                 </div>
 
-                <div v-if="parent.children.length > 0" class="child-comment">
-                    <child-comment :data="parent.children" :parent="parent"></child-comment>
+                <div class="comment-cover" v-if="!parent.parent_id">
+                    <div class="total" v-show="currentIndex !== index">
+                        <span @click="currentIndex = index">共{{parent.children.length}}条回复 ></span>
+                    </div>
+                    <div class="collapse" v-show="currentIndex === index">
+                        <span @click="currentIndex = -1">收起评论 ^</span>
+                    </div>
                 </div>
+
+                <van-list class="my-van-list" v-show="currentIndex === index">
+                    <div v-if="parent.children.length > 0" class="child-comment">
+                        <child-comment @reply="handleReply" :data="parent.children" :parent="parent"></child-comment>
+                    </div>
+                </van-list>
+
             </div>
                 
         </div>
@@ -53,50 +65,26 @@
 import ChildComment from '@/components/commentComponents/ChildComment.vue';
 
 export default {
+    props: {
+        commentData: Array,
+    },
     methods: {
         /**
         * @func
-        * @desc 
+        * @desc 回复评论
+        * @param {string} commentId - 参数commentId
         */
-        getCommentData() {
-            this.$http.get('/comment/' + this.$route.params.id)
-            .then(res => {
-
-                //处理数据
-                this.commentData = this.handleUserData(null, res.data);
-
-                //向父组件传送评论长度
-                this.$emit("commentLength", res.data.length);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        },
-        /**
-        * @func
-        * @desc 递归处理数据
-        * @param {string} target - 目标
-        * @param {array} data - 数据
-        */
-        handleUserData(target, data) {
-            let data1 = [];
-            for (let i = 0; i < data.length; i ++) {
-                if (data[i].parent_id == target) {
-                    let current = data[i];
-                    current.children = this.handleUserData(data[i].comment_id, data);
-                    data1.push(current);
-                }
-            }
-            return data1;
+        handleReply(commentId, username) {
+            this.$emit("reply", commentId, username);
         }
     },
     created() {
-        this.getCommentData();
+        
     },
     data() {
         return {
-            //comment data
-            commentData: []
+            //current shown comment
+            currentIndex: -1,
         }
     },
     components: {
@@ -154,6 +142,9 @@ export default {
             .comment-content {
                 width: 100%;
                 text-align: left;
+                p {
+                    word-break: break-word;
+                }
             }
 
             .comment-data {
@@ -192,6 +183,26 @@ export default {
                         transform: rotateX(180deg) scale(1.2);
                     }
                 }
+            }
+
+            .comment-cover {
+                width: 100%;
+                padding-bottom: 10px;
+                text-align: left;
+                .total {
+                    color: rgb(0, 162, 255);
+                }
+
+                .collapse {
+                    color: rgb(0, 162, 255);
+                    
+                }   
+            }
+
+            .my-van-list {
+                width: 100%;
+                max-height: 500px;
+                overflow: scroll;
             }
 
             .child-comment {

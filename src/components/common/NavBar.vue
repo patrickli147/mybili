@@ -1,6 +1,6 @@
 <template>
     <div class="nav-wrap">
-        <div class="logo">
+        <div class="logo" @click="$router.push('/')">
             <img src="../../assets/logo.png" alt="">
         </div>
         <div>

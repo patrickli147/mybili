@@ -84,7 +84,7 @@ export default {
 
                             //跳转到userinfo页面
                             setTimeout(() => {
-                                this.$router.push('/userinfo');
+                                this.$router.push('/');
                             }, 1000);
                         }
                         else {

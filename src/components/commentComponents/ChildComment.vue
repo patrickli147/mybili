@@ -1,14 +1,6 @@
 <template>
-  <div class="child-comment-wrap">
-    <div class="comment-cover" v-if="!parent.parent_id">
-      <div class="total" v-show="!isCommentShown">
-        <span @click="isCommentShown = true">共{{data.length}}条回复 ></span>
-      </div>
-      <div class="collapse" v-show="isCommentShown">
-        <span @click="isCommentShown = false">收起评论 ^</span>
-      </div>
-    </div>
-    <van-list :class="!parent.parent_id ? 'my-van-list' : '' " v-show="!parent.parent_id && isCommentShown">
+  <div class="child-comment-wrap" v-if="data.length > 0">
+    
         <div v-for="(child, index) in data" :key="index" class="comment-parent">
           <div class="comment-img">
               <img v-if="child.userinfo && child.userinfo.user_img" :src="child.userinfo.user_img" alt />
@@ -22,13 +14,13 @@
               </div>
               <div class="subscribe">+关注</div>
 
-              <div class="comment-content">
-              <p v-if="parent.parent_id">
-                  回复
-                  <span class="reply">@{{parent.userinfo.name}}:</span>
-                  {{child.comment_content}}
-              </p>
-              <p v-else>{{child.comment_content}}</p>
+              <div class="comment-content" @click="handleReply(child.comment_id, child.userinfo.name)">
+                <p v-if="parent.parent_id">
+                    回复
+                    <span class="reply">@{{parent.userinfo.name}}:</span>
+                    {{child.comment_content}}
+                </p>
+                <p v-else>{{child.comment_content}}</p>
               </div>
 
               <div class="comment-data">
@@ -49,10 +41,9 @@
               </div>
           </div>
           <div v-if="child.children.length > 0" class="child-comment">
-              <child-comment :data="child.children" :parent="child"></child-comment>
+              <child-comment @reply="handleReply" :data="child.children" :parent="child"></child-comment>
           </div>  
         </div> 
-    </van-list>
   </div>
 </template>
 
@@ -70,35 +61,25 @@ export default {
   },
   data() {
     return {
-      //true: comment is shown
-      isCommentShown: false,
+      
     };
   },
+  methods: {
+    /**
+    * @func
+    * @desc 回复评论
+    * @param {string} commentId - 参数commentId
+    */
+    handleReply(commentId, username) {
+        this.$emit("reply", commentId, username);
+    }
+  }
 };
 </script>
 
 <style lang='scss' scoped>
 .child-comment-wrap {
   width: 100%;
-  padding-bottom: 10px;
-
-  .comment-cover {
-    width: 100%;
-    text-align: left;
-    .total {
-      color: rgb(0, 162, 255);
-    }
-
-    .collapse {
-      color: rgb(0, 162, 255);
-      padding-bottom: 10px;
-    }
-  }
-
-  .my-van-list {
-      height: 500px;
-      overflow: scroll;
-  }
 
   .comment-parent {
     width: 100%;
@@ -140,6 +121,10 @@ export default {
       .comment-content {
         width: 100%;
         text-align: left;
+
+        p {
+          word-break: break-word;
+        }
 
         .reply {
           color: rgb(0, 162, 255);

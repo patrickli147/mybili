@@ -22,11 +22,11 @@
         </div>
 
         <div class="sanlian">
-          <div :class="{activeColor:collectionActive}">
+          <div :class="{activeColor:collectionActive}" @click="handleCollectionClicked">
             <span class="icon-star-full"></span>
             <span>收藏</span>
           </div>
-          <div :class="{activeColor:subscritionActive}">
+          <div :class="{activeColor:subscritionActive}" @click="handleSubClicked">
             <span class="icon-bubble"></span>
             <span>关注</span>
           </div>
@@ -48,13 +48,18 @@
             </div>
           </van-tab>
 
-          <van-tab :title='`评论${lengthOfComments}`'>
+          <van-tab :title="`评论${lengthOfComments}`">
             <div class="comment">
-              <Comment 
-                :length="lengthOfComments" 
+              <Comment :length="lengthOfComments" @commitComment="handleCommitComment"></Comment>
+              <CommentContent :commentData="commentData" @reply="handleReply"></CommentContent>
+              <Comment
+                @inputBlur="isReplyShown = false"
+                v-if="isReplyShown"
+                class="reply-comment"
+                :username="replyUsername"
+                :length="lengthOfComments"
                 @commitComment="handleCommitComment"
               ></Comment>
-              <CommentContent @commentLength="length => lengthOfComments = length"></CommentContent>
             </div>
           </van-tab>
         </van-tabs>
@@ -86,6 +91,8 @@ export default {
         .get("/article/" + this.$route.params.id)
         .then((res) => {
           this.articleData = res.data[0];
+
+          this.getInitData();
         })
         .catch((err) => {
           console.log(err);
@@ -106,32 +113,218 @@ export default {
         });
     },
     /**
-    * @func
-    * @desc 
-    * @param {string} commentContent - 评论内容
-    */
+     * @func
+     * @desc
+     * @param {string} commentContent - 评论内容
+     */
     handleCommitComment(commentContent) {
       this.commentParams.comment_content = commentContent;
+      this.commentParams.comment_date = this.getCurrentDate();
+      this.commentParams.article_id = this.$route.params.id;
 
+      this.sendComment();
+    },
+    /**
+     * @func
+     * @desc 处理时间
+     */
+    getCurrentDate() {
       const date = new Date();
       let month = date.getMonth();
-      month ++;
+      month++;
       let day = date.getDate();
       if (month < 10) {
-        month = '0' + month;
+        month = "0" + month;
       }
       if (day < 10) {
-        day = '0' + day;
+        day = "0" + day;
+      }
+      return "" + month + "-" + day;
+    },
+    /**
+     * @func
+     * @desc 发送评论
+     */
+    sendComment() {
+      this.$http
+        .post("/comment_post/" + localStorage.getItem("id"), this.commentParams)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            this.$toast.success("评论成功");
+
+            //reset
+            this.commentParams.parent_id = null;
+            //重新获取comment数据
+            this.getCommentData();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          this.isReplyShown = false;
+        });
+    },
+    /**
+     * @func
+     * @desc
+     */
+    getCommentData() {
+      this.$http
+        .get("/comment/" + this.$route.params.id)
+        .then((res) => {
+          //处理数据
+          this.commentData = this.handleUserData(null, res.data);
+
+          //向父组件传送评论长度
+          this.lengthOfComments = res.data.length;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    /**
+     * @func
+     * @desc 递归处理数据
+     * @param {string} target - 目标
+     * @param {array} data - 数据
+     */
+    handleUserData(target, data) {
+      let data1 = [];
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].parent_id == target) {
+          let current = data[i];
+          current.children = this.handleUserData(data[i].comment_id, data);
+          data1.push(current);
+        }
+      }
+      return data1;
+    },
+    /**
+     * @func
+     * @desc 回复评论
+     * @param {string} commentId - 参数commentId
+     */
+    handleReply(commentId, username) {
+      this.commentParams.parent_id = commentId;
+
+      this.replyUsername = username;
+
+      this.isReplyShown = true;
+    },
+    /**
+     * @func
+     * @desc 收藏
+     */
+    handleCollectionClicked() {
+      if (!sessionStorage.getItem("token")) {
+        this.$toast.fail("请先登录");
+        this.$router.push("/login");
       }
 
-      let data1 = '' + month + '-' + day;
+      this.$http
+        .post("/collection/" + localStorage.getItem("id"), {
+          article_id: this.$route.params.id,
+        })
+        .then((res) => {
+          if (res.data.code === 200) {
+            let msg = res.data.msg;
+            if (msg === "收藏成功") {
+              this.collectionActive = true;
+            }
+            else {
+              this.collectionActive = false;
+            }
+            
+            this.$toast.success(msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    /**
+    * @func
+    * @desc 
+    * @param {string} a - 参数a
+    * @returns {boolean} 返回值为true
+    */
+    handleSubClicked() {
+      if (!sessionStorage.getItem("token")) {
+        this.$toast.fail("请先登录");
+        this.$router.push("/login");
+      }
 
-      this.comment_date = data1;
+      this.$http
+        .post("/sub_scription/" + localStorage.getItem("id"), {
+          sub_id: this.articleData.userid,
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.data.code === 200) {
+            let msg = res.data.msg;
+            if (msg === "关注成功") {
+              this.subscritionActive = true;
+            }
+            else {
+              this.subscritionActive = false;
+            }
+            
+            this.$toast.success(msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    /**
+    * @func
+    * @desc 获取初始数据
+    */
+    getInitData() {
+      if (sessionStorage.getItem("token")) {
+        this.$http.get("/collection/" + localStorage.getItem("id"),{
+          params: {
+            article_id: this.$route.params.id,
+          }
+        })
+        .then(res => {
+          this.collectionActive = res.data.success;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+        this.$http.get('/sub_scription/' + localStorage.getItem("id"), {
+          params: {
+            sub_id: this.articleData.userid,
+          }
+        })
+        .then(res => {
+          console.log(res);
+          this.subscritionActive = res.data.success;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    },
+    /**
+    * @func
+    * @desc 初始化
+    */
+    initData() {
+      this.getArticleData();
+      this.getCommendData();
+      this.getCommentData();
+      if (this.articleData) {
+        this.getInitData();
+      }
     }
   },
   created() {
-    this.getArticleData();
-    this.getCommendData();
+    this.initData();
   },
   data() {
     return {
@@ -139,21 +332,29 @@ export default {
       articleData: null,
       //推荐内容
       commendData: [],
-      //
-      collectionActive: null,
-      //
-      subscritionActive: null,
+      //true: colleciton is active
+      collectionActive: false,
+      //true: subscrition is active
+      subscritionActive: false,
       //true: show article
       isArticleShown: true,
       //van tab active item
-      active: 1,
+      active: 0,
       //length of comments
       lengthOfComments: 0,
       //comment params
       commentParams: {
-        comment_content: '',
-        comment_date: ''
-      }
+        comment_content: "",
+        comment_date: "",
+        article_id: null,
+        parent_id: null,
+      },
+      //comment data
+      commentData: [],
+      //username to reply
+      replyUsername: "",
+      //true: reply is shown
+      isReplyShown: false,
     };
   },
   watch: {
@@ -164,8 +365,7 @@ export default {
         this.isArticleShown = true;
       }, 500);
 
-      this.getArticleData();
-      this.getCommendData();
+      this.initData();
     },
   },
 };
@@ -227,6 +427,10 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
+      .activeColor {
+        color: rgb(251,114,153);
+      }
     }
 
     .commend {
@@ -237,6 +441,15 @@ export default {
       flex-wrap: wrap;
       .commend-item {
         width: 45%;
+      }
+    }
+
+    .comment {
+      width: 100%;
+      position: relative;
+      .reply-comment {
+        position: fixed;
+        top: 400px;
       }
     }
   }

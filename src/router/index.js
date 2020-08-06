@@ -55,6 +55,9 @@ const router = new Router({
             path: '/article/:id',
             name: 'article',
             component: article,
+            meta: {
+                keepalive: true,
+            }
         },
     ]
 });
