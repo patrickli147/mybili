@@ -8,7 +8,7 @@
         <span @click="isCommentShown = false">收起评论 ^</span>
       </div>
     </div>
-    <van-list class="my-van-list" v-show="!parent.parent_id && isCommentShown">
+    <van-list :class="!parent.parent_id ? 'my-van-list' : '' " v-show="!parent.parent_id && isCommentShown">
         <div v-for="(child, index) in data" :key="index" class="comment-parent">
           <div class="comment-img">
               <img v-if="child.userinfo && child.userinfo.user_img" :src="child.userinfo.user_img" alt />
@@ -53,50 +53,6 @@
           </div>  
         </div> 
     </van-list>
-
-    <div v-show="parent.parent_id" v-for="(child, index) in data" :key="index" class="comment-parent">
-        <div class="comment-img">
-            <img v-if="child.userinfo && child.userinfo.user_img" :src="child.userinfo.user_img" alt />
-            <img v-else src="../../assets/default_img.jpg" alt />
-        </div>
-        <div class="comment-detail">
-            <div class="comment-info">
-            <div v-if="child.userinfo" class="comment-username">{{child.userinfo.name}}</div>
-            <div v-else class="comment-username">匿名</div>
-            <div class="comment-date">{{child.comment_date}}</div>
-            </div>
-            <div class="subscribe">+关注</div>
-
-            <div class="comment-content">
-            <p v-if="parent.parent_id">
-                回复
-                <span class="reply">@{{parent.userinfo.name}}:</span>
-                {{child.comment_content}}
-            </p>
-            <p v-else>{{child.comment_content}}</p>
-            </div>
-
-            <div class="comment-data">
-            <div class="like">
-                <img src="../../assets/comment-icons/like.png" alt />
-                <span>12</span>
-            </div>
-            <div class="dis like">
-                <img src="../../assets/comment-icons/like.png" alt />
-                <span>1</span>
-            </div>
-            <div class="share">
-                <img src="../../assets/comment-icons/share.png" alt />
-            </div>
-            <div class="comment">
-                <img src="../../assets/comment-icons/pinglun.png" alt />
-            </div>
-            </div>
-        </div>
-        <div v-if="child.children.length > 0" class="child-comment">
-            <child-comment :data="child.children" :parent="child"></child-comment>
-        </div> 
-    </div>
   </div>
 </template>
 
